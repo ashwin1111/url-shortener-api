@@ -21,15 +21,7 @@ dotenv.config()
 var jwtToken = require('./jwtToken');
 var sendEmail = require('./verifyEmail');
 
-const { Pool } = require('pg')
-const pool = new Pool({
-    user: `${process.env.user}`,
-    host: `${process.env.host}`,
-    database: `${process.env.database}`,
-    password: `${process.env.password}`,
-    port: '5432',
-    ssl: true
-});
+const pool = require('../db/pgConnect');
 
 router.post('/register', async function (req, res) {
     if (req.body.name === '' || req.body.email === '' || req.body.password === '') {
@@ -48,7 +40,7 @@ router.post('/register', async function (req, res) {
         });
     }
 
-    const client = await pool.connect();
+    const client = await pool().connect();
     await JSON.stringify(client.query('SELECT id FROM url_shortner_users WHERE "email"=$1', [req.body.email], async function (err, result) {
         if (result.rows[0]) {
             return res.status(403).send({
@@ -89,7 +81,7 @@ router.post('/login', async function (req, res) {
             msg: "Bad payload"
         });
     }
-    const client = await pool.connect()
+    const client = await pool().connect()
     await JSON.stringify(client.query('SELECT * FROM url_shortner_users WHERE "email"=$1', [req.body.email], function (err, result) {
         if (!result.rows[0]) {
             return res.status(404).send({
@@ -134,7 +126,7 @@ router.post('/login', async function (req, res) {
 router.get('/verify', async function (req, res, next) {
     try {
         const id = req.query.id;
-        const client = await pool.connect()
+        const client = await pool().connect()
         await JSON.stringify(client.query('SELECT id FROM url_shortner_users WHERE id=$1', [id], async function (err, result) {
             if (result.rows[0] && id === result.rows[0].id) {
                 await JSON.stringify(client.query('update url_shortner_users set verified = true where id=$1', [id], async function (err, result) {
@@ -160,7 +152,7 @@ router.get('/verify', async function (req, res, next) {
 
 router.get('/me', jwtToken, async function (req, res, next) {
     try {
-        const client = await pool.connect()
+        const client = await pool().connect()
         await JSON.stringify(client.query('SELECT * FROM url_shortner_users WHERE id=$1', [req.token.id], function (err, result) {
             if (result.rows[0]) {
                 return res.status(200).send({

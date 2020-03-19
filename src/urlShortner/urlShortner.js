@@ -11,15 +11,7 @@ const uuidv4 = require('uuid/v4');
 
 const randomize = require('randomatic');
 
-const { Pool } = require('pg')
-const pool = new Pool({
-    user: `${process.env.user}`,
-    host: `${process.env.host}`,
-    database: `${process.env.database}`,
-    password: `${process.env.password}`,
-    port: '5432',
-    ssl: true
-});
+const pool = require('../db/pgConnect');
 
 var jwtToken = require('../auth/jwtToken');
 
@@ -33,7 +25,7 @@ router.post('/random', jwtToken, async (req, result) => {
     var bigUrl = req.body.url;
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
-    const client = await pool.connect();
+    const client = await pool().connect();
     await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
         [id, bigUrl, shortUrl, req.token.email], async function (err, res) {
             if (err) {
@@ -70,7 +62,7 @@ router.post('/custom', jwtToken, async function (req, result) {
     var bigUrl = req.body.url;
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
-    const client = await pool.connect();
+    const client = await pool().connect();
     await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
         [id, bigUrl, shortUrl, req.token.email], async function (err, res) {
             if (err) {

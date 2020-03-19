@@ -7,15 +7,7 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-const { Pool } = require('pg')
-const pool = new Pool({
-    user: `${process.env.user}`,
-    host: `${process.env.host}`,
-    database: `${process.env.database}`,
-    password: `${process.env.password}`,
-    port: '5432',
-    ssl: true
-});
+const pool = require('../db/pgConnect');
 
 router.get('/:shortUrl', async (req, result) => {
     var shortUrl;
@@ -24,7 +16,7 @@ router.get('/:shortUrl', async (req, result) => {
     } else {
         shortUrl = process.env.api_url_local + '/' + req.params.shortUrl;
     }
-    const client = await pool.connect()
+    const client = await pool().connect()
     await JSON.stringify(client.query(`select * from url where short_url = $1`,
         [shortUrl], async function (err, res) {
             if (err) {
