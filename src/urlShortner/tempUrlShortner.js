@@ -11,7 +11,7 @@ const uuidv4 = require('uuid/v4');
 
 const randomize = require('randomatic');
 
-const pool = require('../db/pgConnect');
+const pool = require('../db/postgres');
 
 var validateUrl = require('./validateUrl');
 

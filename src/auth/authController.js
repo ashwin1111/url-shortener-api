@@ -21,7 +21,7 @@ dotenv.config()
 var jwtToken = require('./jwtToken');
 var sendEmail = require('./verifyEmail');
 
-const pool = require('../db/pgConnect');
+const pool = require('../db/postgres');
 
 router.post('/register', async function (req, res) {
     if (req.body.name === '' || req.body.email === '' || req.body.password === '') {

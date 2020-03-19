@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const pool = require('../db/pgConnect');
+const pool = require('../db/postgres');
 
 cron.schedule('0 */12 * * *', async() => {
 // cron.schedule('46 19 * * *', async() => {

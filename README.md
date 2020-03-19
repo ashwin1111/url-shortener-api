@@ -18,15 +18,15 @@ Simple URL shortener! URL shortener allows to reduce long links from Facebook, Y
 
 `Postgres Database`
 
+`Valid URLs`
+
+`Job to run every 12h to delete url's with expired time`
+
+`Implemented caching using redis`
+
 ## Future releases
 
-`validate urls`
-
 `check whether the requested short url is available`
-
-`job to run every 12h to delete url with expired time`
-
-`cache using redis`
 
 `delete short url`
 

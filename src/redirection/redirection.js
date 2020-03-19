@@ -7,7 +7,9 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-const pool = require('../db/pgConnect');
+const pool = require('../db/postgres');
+
+const redisClient = require('../db/redis');
 
 router.get('/:shortUrl', async (req, result) => {
     var shortUrl;
@@ -16,23 +18,32 @@ router.get('/:shortUrl', async (req, result) => {
     } else {
         shortUrl = process.env.api_url_local + '/' + req.params.shortUrl;
     }
-    const client = await pool().connect()
-    await JSON.stringify(client.query(`select * from url where short_url = $1`,
-        [shortUrl], async function (err, res) {
-            if (err) {
-                console.log('err in retreaving url', err);
-                return result.status(500).send('err in retreaving url');
-            } else {
-                if (res.rows[0]) {
-                    var bigUrl = res.rows[0].big_url;
 
-                    return result.redirect(bigUrl);
-                } else {
-                    return result.status(500).send('err in retreaving url');
-                }
-            }
-        }));
-    client.release();
+    await redisClient().get(shortUrl, async(err, data) => {
+        if (data !== null) {
+            console.log('returning data from cache');
+            return result.redirect(data);
+        } else {
+            const client = await pool().connect()
+            await JSON.stringify(client.query(`select * from url where short_url = $1`,
+                [shortUrl], async function (err, res) {
+                    if (err) {
+                        console.log('err in retreaving url', err);
+                        return result.status(500).send('err in retreaving url');
+                    } else {
+                        if (res.rows[0]) {
+                            var bigUrl = res.rows[0].big_url;
+                            await redisClient().setex(shortUrl, 86400, bigUrl);
+
+                            return result.redirect(bigUrl);
+                        } else {
+                            return result.status(500).send('err in retreaving url');
+                        }
+                    }
+                }));
+            client.release();
+        }
+    });
 });
 
 module.exports = router;
