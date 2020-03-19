@@ -152,7 +152,7 @@ router.get('/verify', async function (req, res, next) {
 
 router.get('/me', jwtToken, async function (req, res, next) {
     try {
-        const client = await pool().connect()
+        const client = await pool().connect();
         await JSON.stringify(client.query('SELECT * FROM url_shortner_users WHERE id=$1', [req.token.id], function (err, result) {
             if (result.rows[0]) {
                 return res.status(200).send({

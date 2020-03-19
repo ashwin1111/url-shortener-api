@@ -13,7 +13,9 @@ const randomize = require('randomatic');
 
 const pool = require('../db/pgConnect');
 
-router.post('/random', async (req, result) => {
+var validateUrl = require('./validateUrl');
+
+router.post('/random', validateUrl, async (req, result) => {
     var shortUrl;
     if (process.env.PORT) {
         shortUrl = process.env.api_url_heroku + '/' + randomize('a0', 4);
@@ -50,7 +52,7 @@ router.post('/random', async (req, result) => {
     client.release();
 });
 
-router.post('/custom', async function (req, result) {
+router.post('/custom', validateUrl, async function (req, result) {
     var shortUrl;
     if (process.env.PORT) {
         shortUrl = process.env.api_url_heroku + '/' + req.body.customShortUrl;

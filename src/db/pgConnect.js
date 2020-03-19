@@ -1,5 +1,5 @@
 const { Pool } = require('pg')
-console.log('db')
+
 const pool = new Pool({
     user: `${process.env.user}`,
     host: `${process.env.host}`,

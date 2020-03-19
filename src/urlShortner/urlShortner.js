@@ -15,7 +15,9 @@ const pool = require('../db/pgConnect');
 
 var jwtToken = require('../auth/jwtToken');
 
-router.post('/random', jwtToken, async (req, result) => {
+var validateUrl = require('./validateUrl');
+
+router.post('/random', jwtToken, validateUrl, async (req, result) => {
     var shortUrl;
     if (process.env.PORT) {
         shortUrl = process.env.api_url_heroku + '/' + randomize('a0', 4);
@@ -52,7 +54,7 @@ router.post('/random', jwtToken, async (req, result) => {
     client.release();
 });
 
-router.post('/custom', jwtToken, async function (req, result) {
+router.post('/custom', jwtToken, validateUrl, async function (req, result) {
     var shortUrl;
     if (process.env.PORT) {
         shortUrl = process.env.api_url_heroku + '/' + req.body.customShortUrl;
