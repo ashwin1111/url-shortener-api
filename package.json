@@ -20,6 +20,7 @@
     "fs": "0.0.1-security",
     "handlebars": "^4.7.2",
     "jsonwebtoken": "^7.4.1",
+    "node-cron": "^2.0.3",
     "pg": "^7.17.1",
     "randomatic": "^3.1.1",
     "sendgrid": "^5.2.3",

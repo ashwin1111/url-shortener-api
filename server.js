@@ -5,6 +5,6 @@ var app = require('./src/routes');
 
 var port = process.env.PORT || 3333;
 
-app.listen(port, (req, res) => {
+app.listen(port, () => {
     console.log('URL Shortner is listening on port ' + port);
 });
