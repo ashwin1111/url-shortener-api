@@ -12,6 +12,6 @@ app.use('/auth', require('./auth/authController'));
 
 app.use('/url/permanent', require('./urlShortner/urlShortner'));
 
-app.use('/url/temp', require('./urlShortner/tempUrlShortner'));
+app.use('/url/temporary', require('./urlShortner/tempUrlShortner'));
 
 module.exports = app;
