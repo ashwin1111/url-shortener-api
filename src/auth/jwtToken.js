@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
 
     jwt.verify(token, process.env.jwtSecret, function (err, decoded) {
         if (err && err.name === 'TokenExpiredError') {
-            return res.status(500).send({
+            return res.status(200).send({
                 auth: true,
                 token: 'expired',
                 message: 'Token Expired'
