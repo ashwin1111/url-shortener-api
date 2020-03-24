@@ -11,6 +11,10 @@ const pool = require('../db/postgres');
 
 const redisClient = require('../db/redis');
 
+router.get('/', (req, res) => {
+    res.redirect('https://urlll-shortener.web.app/short-url');
+});
+
 router.get('/:shortUrl', async (req, result) => {
     var shortUrl;
     if (process.env.PORT) {

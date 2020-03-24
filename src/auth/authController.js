@@ -174,17 +174,36 @@ router.get('/me', jwtToken, async function (req, res, next) {
     }
 });
 
-router.post('/refresh_token', async function (req, res, next) {
-    var token = jwt.sign({
-        id: req.body.email
-    }, process.env.jwtSecret, {
-        expiresIn: 86400
-    });
-    return res.status(200).send({
-        auth: true,
-        token: token,
-        msg: 'Token refreshed :)'
-    });
+router.post('/refresh_token', async function (req, res) {
+    var token = req.headers['x-access-token'];
+    if (!token) {
+        return res.status(403).send({
+            auth: false,
+            token: null,
+            message: 'No token provided.'
+        });
+    } else {
+        jwt.verify(token, process.env.jwtSecret, function (err, decoded) {
+            if (err && err.name === 'TokenExpiredError') {
+                var token = jwt.sign({
+                    id: req.body.email
+                }, process.env.jwtSecret, {
+                    expiresIn: 86400
+                });
+                return res.status(200).send({
+                    auth: true,
+                    token: token,
+                    msg: 'Token refreshed :)'
+                });
+            } else if (err) {
+                return res.status(500).send({
+                    auth: false,
+                    token: null,
+                    message: 'Failed to authenticate token.'
+                });
+            }
+        });
+    }
 });
 
 router.get('/logout', jwtToken, function (req, res) {
