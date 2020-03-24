@@ -1,8 +1,7 @@
 var express = require('express');
 var app = express();
-app.use(express.static('public'));
 
-var job = require('./jobs/checkExpiredUrl');
+require('./jobs/checkExpiredUrl');
 
 const cors = require('cors');
 app.use(cors());
