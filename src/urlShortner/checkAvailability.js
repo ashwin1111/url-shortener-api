@@ -9,7 +9,9 @@ router.use(bodyParser.json());
 
 const pool = require('../db/postgres');
 
-router.post('/', async (req, result) => {
+var jwtToken = require('../auth/jwtToken');
+
+router.post('/', jwtToken, async (req, result) => {
     var shortId = process.env.api_url_heroku + '/' + req.body.customShortUrl;
     console.log('shortIdshortId', shortId);
     const client = await pool().connect()
@@ -18,8 +20,6 @@ router.post('/', async (req, result) => {
             if (err) {
                 console.log('err in retreaving short url', err);
                 return result.status(500).send({
-                    auth: false,
-                    token: 'Anonymous user',
                     msg: 'Internal error'
                 });
             } else if (res.rowCount > 0) {
