@@ -133,11 +133,9 @@ router.get('/verify', async function (req, res, next) {
                     res.redirect('https://app.urlll.xyz/verified');
                 }))
             } else {
-                return res.status(404).send({
-                    auth: true,
-                    token: null,
-                    msg: 'No user for the given id'
-                });
+                return res.status(404).send(
+                    'No user for the given id'
+                );
             }
         }));
         client.release();

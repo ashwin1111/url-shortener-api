@@ -14,4 +14,6 @@ app.use('/url/permanent', require('./urlShortner/urlShortner'));
 
 app.use('/url/temporary', require('./urlShortner/tempUrlShortner'));
 
+app.use('/url/availability', require('./urlShortner/checkAvailability'));
+
 module.exports = app;
