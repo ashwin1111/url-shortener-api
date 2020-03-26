@@ -6,9 +6,7 @@ function validateUrl(req, res, next) {
     if (!validUrl.isUri(bigUrl)) {
         console.log('Not a valid URL', bigUrl);
         return res.status(500).send({
-            auth: true,
-            token: true,
-            message: 'Not a valid URL'
+            msg: 'Not a valid URL'
         });
     }
 
