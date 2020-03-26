@@ -9,9 +9,7 @@ router.use(bodyParser.json());
 
 const pool = require('../db/postgres');
 
-var jwtToken = require('../auth/jwtToken');
-
-router.post('/', jwtToken, async (req, result) => {
+router.post('/', async (req, result) => {
     var shortId = process.env.api_url_heroku + '/' + req.body.customShortUrl;
     console.log('shortIdshortId', shortId);
     const client = await pool().connect()
