@@ -28,7 +28,7 @@ router.get('/:shortUrl', async (req, result) => {
             console.log('returning data from cache');
             return result.redirect(data);
         } else {
-            const client = await pool().connect()
+            const client = await pool().connect();
             await JSON.stringify(client.query(`select * from url where short_url = $1`,
                 [shortUrl], async function (err, res) {
                     if (err) {
