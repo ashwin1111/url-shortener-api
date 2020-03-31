@@ -10,6 +10,7 @@ router.use(bodyParser.json());
 const pool = require('../db/postgres');
 
 router.post('/', async (req, result) => {
+    console.log('checking availability for ', req.body.customShortUrl);
     var shortId = process.env.api_url_heroku + '/' + req.body.customShortUrl;
     const client = await pool().connect()
     await JSON.stringify(client.query(`select * from url where short_url=$1`,
