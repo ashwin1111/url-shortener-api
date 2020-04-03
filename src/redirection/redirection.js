@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:shortUrl', async (req, result) => {
-    var shortUrl = 'urlll.xyz/' + req.params.shortUrl;
+    var shortUrl = req.params.shortUrl;
 
     redisClient().get(shortUrl, async(err, data) => {
         if (data !== null) {
