@@ -32,7 +32,7 @@ router.post('/random', validateUrl, async (req, result) => {
                 });
             } else {
                 var data = {
-                    short_url: shortUrl,
+                    short_url: 'urlll.xyz/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };
@@ -64,7 +64,7 @@ router.post('/custom', validateUrl, async function (req, result) {
                 });
             } else {
                 var data = {
-                    short_url: shortUrl,
+                    short_url: 'urlll.xyz/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };

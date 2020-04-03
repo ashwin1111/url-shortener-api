@@ -34,7 +34,7 @@ router.post('/random', jwtToken, validateUrl, async (req, result) => {
                 });
             } else {
                 var data = {
-                    short_url: shortUrl,
+                    short_url: 'urlll.xyz/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };
@@ -66,7 +66,7 @@ router.post('/custom', jwtToken, validateUrl, async function (req, result) {
                 });
             } else {
                 var data = {
-                    short_url: shortUrl,
+                    short_url: 'urlll.xyz/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };
