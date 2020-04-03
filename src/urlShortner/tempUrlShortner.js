@@ -18,7 +18,9 @@ var validateUrl = require('./validateUrl');
 router.post('/random', validateUrl, async (req, result) => {
     var shortUrl;
     if (process.env.PORT) {
-        shortUrl = process.env.api_url_heroku + '/' + randomize('a0', 4);
+        // shortUrl = process.env.api_url_heroku + '/' + randomize('a0', 4);
+        // have to check
+        shortUrl = 'urlll.xyz/' + randomize('a0', 4);
     } else {
         shortUrl = process.env.api_url_local + '/' + randomize('a0', 4);
     }
