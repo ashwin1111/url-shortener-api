@@ -16,4 +16,10 @@ app.use('/url/temporary', require('./urlShortner/tempUrlShortner'));
 
 app.use('/url/availability', require('./urlShortner/checkAvailability'));
 
+app.use('/collections', require('./collections/collection'));
+
+app.use('/collections/update', require('./collections/updateCollection'));
+
+app.use('/profile', require('./profile/profile'));
+
 module.exports = app;
