@@ -28,7 +28,7 @@ router.post('/random', jwtToken, validateUrl, async (req, result) => {
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
     const client = await pool().connect();
-    await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
+    await client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
         [id, bigUrl, shortUrl, req.token.email], async function (err, res) {
             if (err) {
                 console.log('err in creating short url', err);
@@ -50,7 +50,7 @@ router.post('/random', jwtToken, validateUrl, async (req, result) => {
                     msg: data
                 });
             }
-        }));
+        });
     client.release();
 });
 
@@ -67,7 +67,7 @@ router.post('/custom', jwtToken, validateUrl, async function (req, result) {
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
     const client = await pool().connect();
-    await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
+    await client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '10 year')`,
         [id, bigUrl, shortUrl, req.token.email], async function (err, res) {
             if (err) {
                 console.log('err in creating short url', err);
@@ -89,7 +89,7 @@ router.post('/custom', jwtToken, validateUrl, async function (req, result) {
                     msg: data
                 });
             }
-        }));
+        });
     client.release();
 });
 

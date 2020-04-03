@@ -15,7 +15,7 @@ router.post('/', async (req, result) => {
     // have to check
     var shortId = 'urlll.xyz/' + req.body.customShortUrl;
     const client = await pool().connect()
-    await JSON.stringify(client.query(`select * from url where short_url=$1`,
+    await client.query(`select * from url where short_url=$1`,
         [shortId], async function (err, res) {
             if (err) {
                 console.log('err in retreaving short url', err);
@@ -33,7 +33,7 @@ router.post('/', async (req, result) => {
                     availability: true
                 });
             }
-        }));
+        });
     client.release();
 });
 

@@ -23,13 +23,13 @@ router.get('/:shortUrl', async (req, result) => {
         shortUrl = process.env.api_url_local + '/' + req.params.shortUrl;
     }
 
-    await redisClient().get(shortUrl, async(err, data) => {
+    redisClient().get(shortUrl, async(err, data) => {
         if (data !== null) {
             console.log('returning data from cache');
             return result.redirect(data);
         } else {
             const client = await pool().connect();
-            await JSON.stringify(client.query(`select * from url where short_url = $1`,
+            await client.query(`select * from url where short_url = $1`,
                 [shortUrl], async function (err, res) {
                     if (err) {
                         console.log('err in retreaving url', err);
@@ -37,14 +37,14 @@ router.get('/:shortUrl', async (req, result) => {
                     } else {
                         if (res.rows[0]) {
                             var bigUrl = res.rows[0].big_url;
-                            await redisClient().setex(shortUrl, 86400, bigUrl);
+                            redisClient().setex(shortUrl, 86400, bigUrl);
 
                             return result.redirect(bigUrl);
                         } else {
                             return result.status(500).send('err in retreaving url');
                         }
                     }
-                }));
+                });
             client.release();
         }
     });

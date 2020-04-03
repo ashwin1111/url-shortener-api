@@ -26,7 +26,7 @@ router.post('/random', validateUrl, async (req, result) => {
     var expiryTime = new Date(new Date().setDate(new Date().getDate() + 7));
     var id = await uuidv4();
     const client = await pool().connect()
-    await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, created_at, expiry) VALUES ($1, $2, $3, now(), NOW() + INTERVAL '7 DAY')`,
+    await client.query(`INSERT INTO url (id, big_url, short_url, created_at, expiry) VALUES ($1, $2, $3, now(), NOW() + INTERVAL '7 DAY')`,
         [id, bigUrl, shortUrl], async function (err, res) {
             if (err) {
                 console.log('err in creating short url', err);
@@ -48,7 +48,7 @@ router.post('/random', validateUrl, async (req, result) => {
                     msg: data
                 });
             }
-        }));
+        });
     client.release();
 });
 
