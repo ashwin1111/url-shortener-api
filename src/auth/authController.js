@@ -176,12 +176,4 @@ router.post('/refresh_token', async function (req, res) {
     }
 });
 
-router.get('/logout', jwtToken, function (req, res) {
-    res.status(200).send({
-        auth: false,
-        token: null,
-        msg: 'User signed out, bubyee :)'
-    });
-});
-
 module.exports = router;

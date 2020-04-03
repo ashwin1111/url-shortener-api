@@ -13,6 +13,12 @@ router.post('/', async (req, result) => {
     console.log('checking availability for ', req.body.customShortUrl);
     // var shortId = process.env.api_url_heroku + '/' + req.body.customShortUrl;
     // have to check
+    if (req.body.customShortUrl.toLowerCase().includes('verify')) {
+        return result.status(200).send({
+            availability: false
+        });
+    }
+ 
     var shortId = 'urlll.xyz/' + req.body.customShortUrl;
     const client = await pool().connect()
     await client.query(`select * from url where short_url=$1`,

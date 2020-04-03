@@ -21,8 +21,8 @@ router.post('/random', validateUrl, async (req, result) => {
     var expiryTime = new Date(new Date().setDate(new Date().getDate() + 7));
     var id = await uuidv4();
     const client = await pool().connect()
-    await client.query(`INSERT INTO url (id, big_url, short_url, created_at, expiry) VALUES ($1, $2, $3, now(), NOW() + INTERVAL '7 DAY')`,
-        [id, bigUrl, shortUrl], async function (err, res) {
+    await client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '7 DAY')`,
+        [id, bigUrl, shortUrl, 'temporaryUser'], async function (err, res) {
             if (err) {
                 console.log('err in creating short url', err);
                 return result.status(500).send({
@@ -53,8 +53,8 @@ router.post('/custom', validateUrl, async function (req, result) {
     var expiryTime = new Date(new Date().setDate(new Date().getDate() + 7));
     var id = await uuidv4();
     const client = await pool().connect()
-    await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, created_at, expiry) VALUES ($1, $2, $3, now(), NOW() + INTERVAL '7 DAY')`,
-        [id, bigUrl, shortUrl], async function (err, res) {
+    await JSON.stringify(client.query(`INSERT INTO url (id, big_url, short_url, email, created_at, expiry) VALUES ($1, $2, $3, $4, now(), NOW() + INTERVAL '7 DAY')`,
+        [id, bigUrl, shortUrl, 'temporaryUser'], async function (err, res) {
             if (err) {
                 console.log('err in creating short url', err);
                 return result.status(500).send({
