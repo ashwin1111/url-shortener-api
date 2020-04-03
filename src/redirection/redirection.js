@@ -16,13 +16,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:shortUrl', async (req, result) => {
-    var shortUrl;
-    if (process.env.PORT) {
-        // shortUrl = process.env.api_url_heroku + '/' + req.params.shortUrl;
-        shortUrl = 'urlll.xyz/' + req.params.shortUrl;
-    } else {
-        shortUrl = process.env.api_url_local + '/' + req.params.shortUrl;
-    }
+    var shortUrl = 'urlll.xyz/' + req.params.shortUrl;
 
     redisClient().get(shortUrl, async(err, data) => {
         if (data !== null) {

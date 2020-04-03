@@ -18,14 +18,7 @@ var jwtToken = require('../auth/jwtToken');
 var validateUrl = require('./validateUrl');
 
 router.post('/random', jwtToken, validateUrl, async (req, result) => {
-    var shortUrl;
-    if (process.env.PORT) {
-        // shortUrl = process.env.api_url_heroku + '/' + randomize('a0', 4);
-        // have to check
-        shortUrl = 'urlll.xyz/' + randomize('a0', 4);
-    } else {
-        shortUrl = process.env.api_url_local + '/' + randomize('a0', 4);
-    }
+    var shortUrl = randomize('a0', 4);
     var bigUrl = req.body.url;
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
@@ -57,14 +50,7 @@ router.post('/random', jwtToken, validateUrl, async (req, result) => {
 });
 
 router.post('/custom', jwtToken, validateUrl, async function (req, result) {
-    var shortUrl;
-    if (process.env.PORT) {
-        // shortUrl = process.env.api_url_heroku + '/' + req.body.customShortUrl;
-        // have to check
-        shortUrl = 'urlll.xyz/' + req.body.customShortUrl;
-    } else {
-        shortUrl = process.env.api_url_local + '/' + req.body.customShortUrl;
-    }
+    var shortUrl = req.body.customShortUrl;
     var bigUrl = req.body.url;
     var expiryTime = new Date(new Date().setFullYear(new Date().getFullYear() + 10));
     var id = await uuidv4();
