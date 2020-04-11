@@ -21,6 +21,7 @@ function verifyToken(req, res, next) {
                 message: 'Token Expired'
             });
         } else if (err) {
+            console.log('Failed to authenticate token',err);
             return res.status(500).send({
                 auth: false,
                 token: null,

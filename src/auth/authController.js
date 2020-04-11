@@ -20,6 +20,7 @@ dotenv.config()
 
 var jwtToken = require('./jwtToken');
 var sendEmail = require('./verifyEmail');
+var forgotPassword = require('./forgotPasswordEmail');
 
 const pool = require('../db/postgres');
 
@@ -103,7 +104,7 @@ router.post('/login', async function (req, res) {
                     id: result.rows[0].id,
                     email: req.body.email
                 }, process.env.jwtSecret, {
-                    expiresIn: 86400
+                    expiresIn: 604800
                 });
 
                 return res.status(200).send({
@@ -144,36 +145,114 @@ router.get('/verify', async function (req, res, next) {
     }
 });
 
-router.post('/refresh_token', async function (req, res) {
-    var token = req.headers['x-access-token'];
-    if (!token) {
+router.post('/forgot_password', async function (req, res) {
+    if (req.body.email === '') {
         return res.status(403).send({
             auth: false,
             token: null,
-            message: 'No token provided.'
-        });
-    } else {
-        jwt.verify(token, process.env.jwtSecret, function (err, decoded) {
-            if (err && err.name === 'TokenExpiredError') {
-                var token = jwt.sign({
-                    id: req.body.email
-                }, process.env.jwtSecret, {
-                    expiresIn: 86400
-                });
-                return res.status(200).send({
-                    auth: true,
-                    token: token,
-                    msg: 'Token refreshed :)'
-                });
-            } else if (err) {
-                return res.status(500).send({
-                    auth: false,
-                    token: null,
-                    message: 'Failed to authenticate token.'
-                });
-            }
+            msg: "Bad payload"
         });
     }
+
+    if (!validator.validate(req.body.email)) {
+        return res.status(404).send({
+            auth: false,
+            token: null,
+            msg: "Email badly formatted"
+        });
+    }
+
+    const client = await pool().connect();
+    await client.query('SELECT * FROM url_shortner_users WHERE "email"=$1', [req.body.email], async function (err, result) {
+        if (result.rows[0]) {
+            var token = await jwt.sign({
+                id: result.rows[0].id,
+                email: result.rows[0].email
+            }, process.env.jwtSecret, {
+                expiresIn: 3600
+            });
+            forgotPassword(result.rows[0].name, token, result.rows[0].email);
+            return res.status(403).send({
+                msg: "If we found an account associated with that email, we've sent password reset instructions"
+            });
+        }
+    });
+});
+
+router.get('/forgot_password/redirect', async function (req, res) {
+    if (req.query.token === '' || req.query.token === null || req.query.token === undefined) {
+        return res.status(403).send({
+            auth: false,
+            token: null,
+            msg: "Bad payload"
+        });
+    }
+
+    var id;
+    var email;
+
+    jwt.verify(req.query.token, process.env.jwtSecret, function (err, decoded) {
+        if (err && err.name === 'TokenExpiredError') {
+            return res.status(200).send({
+                auth: true,
+                token: 'expired',
+                message: 'Token Expired'
+            });
+        } else if (err) {
+            return res.status(500).send({
+                auth: false,
+                token: null,
+                message: 'Failed to authenticate token.'
+            });
+        }
+
+        id = decoded.id;
+        email = decoded.email;
+    });
+
+    const client = await pool().connect();
+    await client.query('SELECT * FROM url_shortner_users WHERE "email"=$1 and id=$2', [email, id], async function (err, result) {
+        if (result.rows[0]) {
+            var token = await jwt.sign({
+                id: result.rows[0].id,
+                email: result.rows[0].email
+            }, process.env.jwtSecret, {
+                expiresIn: 300
+            });
+            if (process.env.PORT) {
+                return res.redirect("https://app.urlll.xyz" + "/reset-password?token="+token);
+            } else {
+                return res.redirect("http://localhost:4200" + "/reset-password?token="+token);
+            }
+        } else {
+            return res.send("Internal Error");
+        }
+    });
+});
+
+router.post('/forgot_password/reset', jwtToken, async function (req, res) {
+    if (req.body.password === '') {
+        return res.status(403).send({
+            msg: "Bad payload"
+        });
+    }
+
+    var pwd = await bcrypt.hashSync(req.body.password, 8);
+    const client = await pool().connect();
+    await client.query('update url_shortner_users set password = $1 WHERE email = $2 and id = $3', [pwd, req.token.email, req.token.id], async function (err, result) {
+        if (err) {
+            console.log('error in pwd reset', err);
+            return res.status(403).send({
+                msg: "Internal error"
+            });
+        } else {
+            if (result.rowCount === 1) {
+                return res.status(403).send({
+                    msg: "Password updated successfully"
+                });
+            }
+        }
+    });
 });
 
 module.exports = router;

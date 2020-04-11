@@ -11,7 +11,7 @@ const pool = require('../db/postgres');
 
 var jwtToken = require('../auth/jwtToken');
 
-router.get('/url', jwtToken, async (req, result) => {
+router.post('/url', jwtToken, async (req, result) => {
     var client = await pool().connect();
 
     await client.query(`select id, big_url, short_url, created_at from url where email = $1`, [req.token.email], async function (err, res) {
