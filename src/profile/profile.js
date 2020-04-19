@@ -30,6 +30,7 @@ router.post('/url', jwtToken, async (req, result) => {
             });
         }
     })
+    client.release();
 });
 
 module.exports = router;
