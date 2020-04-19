@@ -49,6 +49,12 @@ router.post('/availability', jwtToken, async (req, result) => {
 
 router.post('/create', jwtToken, async (req, result) => {
     var successCount = 0;
+    var { name, title, description, url_id } = req.body;
+    if (!req.body.name || !req.body.title || !req.body.description || !req.body.url_id) {
+        return res.status(403).send({
+            msg: "Bad payload"
+        });
+    }
 
     function takeRest() {
         return new Promise(r => setTimeout(r, 100))
@@ -83,7 +89,6 @@ router.post('/create', jwtToken, async (req, result) => {
         })
     }
 
-    var { name, title, description, url_id } = req.body;
     let chain = Promise.resolve();
     // transaction
     client = await pool().connect();
@@ -109,11 +114,10 @@ router.get('/:collectionName', async (req, result) => {
                 })
             }
 
-            return result.status(200).send({
-                collections: res.rows
-            });
+            res.redirect('https://app.urlll.xyz/collections/' + collectionName);
         }
     })
+    client.release();
 });
 
 module.exports = router;
