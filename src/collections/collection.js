@@ -100,10 +100,13 @@ router.post('/create', jwtToken, async (req, result) => {
 });
 
 router.get('/:collectionName', async (req, result) => {
-    var collectionName = req.params.collectionName;
+    return res.redirect('https://app.urlll.xyz/collections/' + req.params.collectionName);
+});
+
+router.get('/list/:collectionName', async (req, result) => {
     client = await pool().connect();
 
-    await client.query(`select * from extended_collections where collection_name = $1`, [collectionName], async function (err, res) {
+    await client.query(`select * from extended_collections where collection_name = $1`, [req.params.collectionName], async function (err, res) {
         if (err) {
             console.log('err in retreaving collections', err);
             return result.status(500).send('err in retreaving collections');
@@ -114,10 +117,12 @@ router.get('/:collectionName', async (req, result) => {
                 })
             }
 
-            res.redirect('https://app.urlll.xyz/collections/' + collectionName);
+            return result.status(200).send({
+                collections: res.rows
+            });
         }
     })
     client.release();
-});
+})
 
 module.exports = router;
