@@ -100,7 +100,7 @@ router.post('/create', jwtToken, async (req, result) => {
 });
 
 router.get('/:collectionName', async (req, result) => {
-    return res.redirect('https://app.urlll.xyz/collections/' + req.params.collectionName);
+    return result.redirect('https://app.urlll.xyz/collections/' + req.params.collectionName);
 });
 
 router.get('/list/:collectionName', async (req, result) => {
