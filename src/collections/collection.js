@@ -115,13 +115,13 @@ router.get('/my_collections/all', jwtToken, async (req, result) => {
         } else {
             if (res.rowCount < 1) {
                 return result.status(200).send({
-                    collections: "User have not created any collections yet"
+                    msg: "User have not created any collections yet"
                 })
+            } else {
+                return result.status(200).send({
+                    collections: res.rows
+                });
             }
-
-            return result.status(200).send({
-                collections: res.rows
-            });
         }
     });
     client.release();
