@@ -14,7 +14,7 @@ var jwtToken = require('../auth/jwtToken');
 router.post('/url', jwtToken, async (req, result) => {
     var client = await pool().connect();
 
-    await client.query(`select id, big_url, short_url, created_at from url where email = $1`, [req.token.email], async function (err, res) {
+    await client.query(`select id, big_url, short_url, created_at, title, description from url where email = $1`, [req.token.email], async function (err, res) {
         if (err) {
             console.log('err in retreaving urls', err);
             return result.status(500).send('err in retreaving urls');

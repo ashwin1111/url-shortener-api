@@ -9,6 +9,8 @@ router.use(bodyParser.json());
 
 const uuidv4 = require('uuid/v4');
 
+const axios = require('axios');
+
 const pool = require('../db/postgres');
 
 var jwtToken = require('../auth/jwtToken');

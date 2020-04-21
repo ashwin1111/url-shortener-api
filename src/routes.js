@@ -3,6 +3,8 @@ var app = express();
 
 require('./jobs/checkExpiredUrl');
 
+require('./jobs/scrapData');
+
 const cors = require('cors');
 app.use(cors());
 
