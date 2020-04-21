@@ -5,7 +5,7 @@ const axios = require('axios');
 cron.schedule('0 */1 * * *', async() => {
     scrapData();
 });
-scrapData();
+
 async function scrapData () {
 
     var successCount = 0;
@@ -34,7 +34,7 @@ async function scrapData () {
                 });
             }).catch(err => {
                 console.log(`Thatha's API didnt answer for ` + rows[successCount].big_url + ' err ' + err);
-                axios.get('https://ashwin1111.herokuapp.com/telegram?msg=' + `Thatha's API didnt answer for ` + rows[successCount].big_url + ' err ' + err);
+                // axios.get('https://ashwin1111.herokuapp.com/telegram?msg=' + `Thatha's API didnt answer for ` + rows[successCount].big_url + ' err ' + err);
                 successCount++;
                 resolve();
             })
