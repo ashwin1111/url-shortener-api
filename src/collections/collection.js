@@ -86,7 +86,6 @@ router.get('/list/:collectionName', async (req, result) => {
             console.log('err in retreaving collections', err);
             return result.status(500).send('err in retreaving collections');
         } else {
-            console.log(res.rows, res.rowCount);
             if (res.rowCount < 1) {
                 return result.status(200).send({
                     collections: "No links found in the given collection name"
