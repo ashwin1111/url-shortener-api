@@ -52,8 +52,10 @@ async function scrapData () {
     client.query(`select * from url where title is null`, async function (err, res) {
         if (err) {
             console.log('err in retreaving url scrap jobs');
+            client.release();
         } else if (res.rowCount < 1) {
             console.log('all row has description and title');
+            client.release();
         } else {
             createChain(res);
         }
