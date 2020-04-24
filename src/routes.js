@@ -24,4 +24,6 @@ app.use('/collections/update', require('./collections/updateCollection'));
 
 app.use('/profile', require('./profile/profile'));
 
+app.use('/extension', require('./extension/extension'));
+
 module.exports = app;
