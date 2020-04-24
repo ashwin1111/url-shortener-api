@@ -109,23 +109,27 @@ router.get('/my_collections/all', jwtToken, async (req, result) => {
     [req.token.email], async function (err, res) {
         if (err) {
             console.log('err in selecting collection list', err);
+            console.log('releasing client');
+            client.release();
             return result.status(500).send({
                 msg: "Internal error"
             })
         } else {
             if (res.rowCount < 1) {
+                console.log('releasing client');
+                client.release();
                 return result.status(200).send({
                     msg: "User have not created any collections yet"
                 })
             } else {
+                console.log('releasing client');
+                client.release();
                 return result.status(200).send({
                     collections: res.rows
                 });
             }
         }
     });
-    console.log('releasing client');
-    client.release();
 })
 
 module.exports = router;
