@@ -124,6 +124,7 @@ router.get('/my_collections/all', jwtToken, async (req, result) => {
             }
         }
     });
+    console.log('releasing client');
     client.release();
 })
 
