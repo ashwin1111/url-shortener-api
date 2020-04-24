@@ -27,6 +27,7 @@ async function scrapData () {
                         console.log('updated 1 scraped data');
                         axios.get('https://ashwin1111.herokuapp.com/telegram?msg=' + `updated scraped data, titled ` + res.data.data.title[0]);
                         if (rows.length === successCount) {
+                            console.log('releasing client');
                             client.release();
                         }
                         resolve();
@@ -36,6 +37,10 @@ async function scrapData () {
                 console.log(`Thatha's API didnt answer for ` + rows[successCount].big_url + ' err ' + err);
                 // axios.get('https://ashwin1111.herokuapp.com/telegram?msg=' + `Thatha's API didnt answer for ` + rows[successCount].big_url + ' err ' + err);
                 successCount++;
+                if (rows.length === successCount) {
+                    console.log('releasing client');
+                    client.release();
+                }
                 resolve();
             })
         })
@@ -52,9 +57,11 @@ async function scrapData () {
     client.query(`select * from url where title is null`, async function (err, res) {
         if (err) {
             console.log('err in retreaving url scrap jobs');
+            console.log('releasing client');
             client.release();
         } else if (res.rowCount < 1) {
             console.log('all row has description and title');
+            console.log('releasing client');
             client.release();
         } else {
             createChain(res);
