@@ -54,7 +54,7 @@ async function scrapData () {
         }
     }
     client = await pool().connect();
-    client.query(`select * from url where title is null`, async function (err, res) {
+    client.query(`select * from url where description is null`, async function (err, res) {
         if (err) {
             console.log('err in retreaving url scrap jobs');
             console.log('releasing client');
