@@ -18,7 +18,7 @@ async function scrapData () {
         return new Promise(async (resolve) => {
             axios.get('https://webpage-details.herokuapp.com/get_page_details?web_address=' + rows[successCount].big_url).then(async(res) => {
                 var description = res.data.data.meta_data[0] || res.data.data.first_p_tag[0] || null;
-                await client.query(`update url set title = $1, description = $2, last_updated_at = now() where id = $3`,
+                await client.query(`update url set title = $1, description = $2, last_updated_at = now(), scraped = true where id = $3`,
                 [res.data.data.title[0], description, rows[successCount].id], async function (err, res2) {
                     if (err) {
                         console.log('err in updating scrap data', err);
@@ -54,13 +54,13 @@ async function scrapData () {
         }
     }
     client = await pool().connect();
-    client.query(`select * from url where description is null`, async function (err, res) {
+    client.query(`select * from url where description is null and scraped is false`, async function (err, res) {
         if (err) {
             console.log('err in retreaving url scrap jobs');
             console.log('releasing client');
             client.release();
         } else if (res.rowCount < 1) {
-            console.log('all row has description and title');
+            // console.log('all row has description and title');
             console.log('releasing client');
             client.release();
         } else {
