@@ -21,6 +21,7 @@ router.get('/:shortUrl', async (req, result) => {
     redisClient().get(shortUrl, async(err, data) => {
         if (data !== null) {
             console.log('returning data from cache');
+            incrementClicks(shortUrl);
             return result.redirect(data);
         } else {
             const client = await pool().connect();
@@ -34,6 +35,7 @@ router.get('/:shortUrl', async (req, result) => {
                             var bigUrl = res.rows[0].big_url;
                             redisClient().setex(shortUrl, 86400, bigUrl);
 
+                            incrementClicks(shortUrl);
                             return result.redirect(bigUrl);
                         } else {
                             return result.status(500).send('err in retreaving url');
@@ -43,6 +45,17 @@ router.get('/:shortUrl', async (req, result) => {
             client.release();
         }
     });
+
+    async function incrementClicks(shortUrl) {
+        const client = await pool().connect();
+        await client.query(`update url set clicks = clicks + 1 where short_url = $1`,
+            [shortUrl], async function (err, res) {
+                if (err) {
+                    console.log('err in incrementing clicks', err);
+                }
+            });
+        client.release();
+    };
 });
 
 module.exports = router;
