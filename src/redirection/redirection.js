@@ -11,8 +11,14 @@ const pool = require('../db/postgres');
 
 const redisClient = require('../db/redis');
 
+let wakeUpCounter = 0;
+
 router.get('/', (req, res) => {
     res.redirect('https://app.urlll.xyz');
+});
+
+router.get('/wakeup', (req, res) => {
+    res.send('thanks for waking me up ' + wakeUpCounter++ + 'th time');
 });
 
 router.get('/:shortUrl', async (req, result) => {
