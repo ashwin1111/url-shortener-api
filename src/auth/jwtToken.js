@@ -7,26 +7,14 @@ function verifyToken(req, res, next) {
     var token = req.headers['x-access-token'];
 
     if (!token)
-        return res.status(403).send({
-            auth: false,
-            token: null,
-            message: 'No token provided.'
-        });
+        return res.redirect('https://app.urlll.xyz/redirect/session-expired');
 
     jwt.verify(token, process.env.jwtSecret, function (err, decoded) {
         if (err && err.name === 'TokenExpiredError') {
-            return res.status(200).send({
-                auth: true,
-                token: 'expired',
-                message: 'Token Expired'
-            });
+            return res.redirect('https://app.urlll.xyz/redirect/session-expired');
         } else if (err) {
             console.log('Failed to authenticate token',err);
-            return res.status(500).send({
-                auth: false,
-                token: null,
-                message: 'Failed to authenticate token.'
-            });
+            return res.redirect('https://app.urlll.xyz/redirect/session-expired');
         }
 
         req.token = {

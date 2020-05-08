@@ -131,7 +131,7 @@ router.get('/verify', async function (req, res, next) {
         await client.query('SELECT id FROM url_shortner_users WHERE id=$1', [id], async function (err, result) {
             if (result.rows[0] && id === result.rows[0].id) {
                 await client.query('update url_shortner_users set verified = true where id=$1', [id], async function (err, result) {
-                    res.redirect('https://app.urlll.xyz/verified');
+                    res.redirect('https://app.urlll.xyz/redirect/verified');
                 })
             } else {
                 return res.status(404).send(
