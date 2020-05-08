@@ -18,6 +18,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/wakeup', (req, res) => {
+    console.log('thanks for waking me up ' + wakeUpCounter++ + 'th time');
     res.send('thanks for waking me up ' + wakeUpCounter++ + 'th time');
 });
 
