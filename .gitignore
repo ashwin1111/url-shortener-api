@@ -2,3 +2,4 @@ node_modules
 todo.txt
 dummy.sql
 .env
+package-lock.json
