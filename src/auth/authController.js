@@ -24,6 +24,84 @@ var forgotPassword = require('./forgotPasswordEmail');
 
 const pool = require('../db/postgres');
 
+const axios = require('axios');
+
+router.get('/google', (req, res) => {
+    const code = req.query.code;
+    const data = {
+        client_id: process.env.googleClientId,
+        client_secret: process.env.googleClientSecret,
+        redirect_uri: 'https://urlll.xyz/auth/google',
+        grant_type: 'authorization_code',
+        code
+    };
+    axios.post('https://oauth2.googleapis.com/token', data).then(async (res) => {
+        const { data } = await axios({
+            url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+            method: 'get',
+            headers: {
+                Authorization: `Bearer ${res.data.access_token}`,
+            }
+        });
+
+        if (data.email && data.name) {
+            checkUser(data.email, data.name);
+        } else {
+            console.log('Error in google auth', err);
+            res.send('Error in google auth');
+        }
+    }).catch(err => {
+        console.log('Error in google auth', err);
+        res.send('Error in google auth');
+    });
+
+    async function checkUser(email, name) {
+        const client = await pool().connect();
+        await client.query('SELECT * FROM url_shortner_users WHERE email=$1', [email], async function (err, result) {
+            if (result.rows[0]) {
+                // sign jwt and login user
+                if (result.rows[0].verified === true) {
+                    var token = jwt.sign({
+                        id: result.rows[0].id,
+                        email: email
+                    }, process.env.jwtSecret, {
+                        expiresIn: 604800
+                    });
+
+                    // handle tokens in frontend redirect to short-url
+                    res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+                } else {
+                    return res.status(404).send({
+                        msg: 'Account not verified'
+                    });
+                }
+            } else {
+                const id = await uuidv4();
+                client.query('INSERT INTO url_shortner_users (id, name, email, created_at, verified, source) VALUES ($1, $2, $3, now(), $4, $5)', [id, name, email, true, 'google'], function (err, result) {
+                    if (err) {
+                        console.log('err in registering user from google auth', err);
+                        return res.status(500).send({
+                            msg: 'Internal error / Bad payload'
+                        })
+                    } else {
+                        // user registered, sign jwt and login user
+                        const token = jwt.sign({
+                            id: id,
+                            email: email
+                        }, process.env.jwtSecret, {
+                            expiresIn: 604800
+                        });
+    
+                        // handle tokens in frontend redirect to short-url
+                        res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+                    }
+                });
+            }
+        });
+        client.release();
+    }
+});
+
 router.post('/register', async function (req, res) {
     if (req.body.name === '' || req.body.email === '' || req.body.password === '') {
         return res.status(403).send({
@@ -220,9 +298,9 @@ router.get('/forgot_password/redirect', async function (req, res) {
                 expiresIn: 300
             });
             if (process.env.PORT) {
-                return res.redirect("https://app.urlll.xyz" + "/reset-password?token="+token);
+                return res.redirect("https://app.urlll.xyz" + "/reset-password?token=" + token);
             } else {
-                return res.redirect("http://localhost:4200" + "/reset-password?token="+token);
+                return res.redirect("http://localhost:4200" + "/reset-password?token=" + token);
             }
         } else {
             return res.send("Internal Error");
