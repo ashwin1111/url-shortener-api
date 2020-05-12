@@ -28,7 +28,6 @@ const axios = require('axios');
 
 router.get('/google', (req, res) => {
     const code = req.query.code;
-    console.log(process.env.googleClientId, process.env.googleClientSecret);
     const data = {
         client_id: process.env.googleClientId,
         client_secret: process.env.googleClientSecret,
@@ -37,7 +36,6 @@ router.get('/google', (req, res) => {
         code
     };
     axios.post('https://oauth2.googleapis.com/token', data).then(async (res) => {
-        console.log('1 sucess', res.data.access_token);
         const { data } = await axios({
             url: 'https://www.googleapis.com/oauth2/v2/userinfo',
             method: 'get',
