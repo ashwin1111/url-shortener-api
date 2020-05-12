@@ -26,6 +26,8 @@ const pool = require('../db/postgres');
 
 const axios = require('axios');
 
+const queryString = require('query-string');
+
 async function socialLogin(email, name, source, res) {
     const client = await pool().connect();
     await client.query('SELECT * FROM url_shortner_users WHERE email=$1', [email], async function (err, result) {
@@ -140,6 +142,46 @@ router.get('/facebook', async (req, res) => {
         console.log(err, 'errrr');
         res.send('Error in facebook auth');
     }
+});
+
+router.get('/github', (req, res) => {
+    const code = req.query.code;
+    getAccessTokenFromCode(code);
+    
+    async function getAccessTokenFromCode(code) {
+        const { data } = await axios({
+          url: 'https://github.com/login/oauth/access_token',
+          method: 'get',
+          params: {
+            client_id: process.env.githubAppId,
+            client_secret: process.env.githubAppSecret,
+            redirect_uri: 'https://urlll.xyz/auth/github',
+            code,
+          },
+        });
+
+        const parsedData = queryString.parse(data);
+        getGitHubUserData(parsedData.access_token);
+      };
+
+      async function getGitHubUserData(access_token) {
+        const { data } = await axios({
+          url: 'https://api.github.com/user',
+          method: 'get',
+          headers: {
+            Authorization: `token ${access_token}`,
+          },
+        });
+
+        if (data.email && data.name) {
+            socialLogin(data.email, data.name, 'github', res);
+        } else if (data.login && data.name) {
+            socialLogin(data.login, data.name, 'github', res);
+        } else {
+            console.log('Error in github auth');
+            res.send('Error in github auth');
+        }
+      };
 });
 
 router.post('/register', async function (req, res) {
