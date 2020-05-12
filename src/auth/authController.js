@@ -26,6 +26,52 @@ const pool = require('../db/postgres');
 
 const axios = require('axios');
 
+async function socialLogin(email, name, source, res) {
+    const client = await pool().connect();
+    await client.query('SELECT * FROM url_shortner_users WHERE email=$1', [email], async function (err, result) {
+        if (result.rows[0]) {
+            // sign jwt and login user
+            if (result.rows[0].verified === true) {
+                var token = jwt.sign({
+                    id: result.rows[0].id,
+                    email: email
+                }, process.env.jwtSecret, {
+                    expiresIn: 604800
+                });
+
+                // handle tokens in frontend redirect to short-url
+                res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+            } else {
+                return res.status(404).send({
+                    msg: 'Account not verified'
+                });
+            }
+        } else {
+            const id = await uuidv4();
+            client.query('INSERT INTO url_shortner_users (id, name, email, created_at, verified, source) VALUES ($1, $2, $3, now(), $4, $5)', [id, name, email, true, source], function (err, result) {
+                if (err) {
+                    console.log('err in registering user from google / facebook auth', err);
+                    return res.status(500).send({
+                        msg: 'Internal error / Bad payload'
+                    })
+                } else {
+                    // user registered, sign jwt and login user
+                    const token = jwt.sign({
+                        id: id,
+                        email: email
+                    }, process.env.jwtSecret, {
+                        expiresIn: 604800
+                    });
+
+                    // handle tokens in frontend redirect to short-url
+                    res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+                }
+            });
+        }
+    });
+    client.release();
+}
+
 router.get('/google', (req, res) => {
     const code = req.query.code;
     const data = {
@@ -45,60 +91,54 @@ router.get('/google', (req, res) => {
         });
 
         if (data.email && data.name) {
-            checkUser(data.email, data.name);
+            socialLogin(data.email, data.name, 'google', res);
         } else {
-            console.log('Error in google auth', err);
+            console.log('Error in google auth');
             res.send('Error in google auth');
         }
     }).catch(err => {
         console.log('Error in google auth', err.data);
         res.send('Error in google auth');
     });
+});
 
-    async function checkUser(email, name) {
-        const client = await pool().connect();
-        await client.query('SELECT * FROM url_shortner_users WHERE email=$1', [email], async function (err, result) {
-            if (result.rows[0]) {
-                // sign jwt and login user
-                if (result.rows[0].verified === true) {
-                    var token = jwt.sign({
-                        id: result.rows[0].id,
-                        email: email
-                    }, process.env.jwtSecret, {
-                        expiresIn: 604800
-                    });
+router.get('/facebook', async (req, res) => {
+    const code = req.query.code;
 
-                    // handle tokens in frontend redirect to short-url
-                    res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
-                } else {
-                    return res.status(404).send({
-                        msg: 'Account not verified'
-                    });
-                }
-            } else {
-                const id = await uuidv4();
-                client.query('INSERT INTO url_shortner_users (id, name, email, created_at, verified, source) VALUES ($1, $2, $3, now(), $4, $5)', [id, name, email, true, 'google'], function (err, result) {
-                    if (err) {
-                        console.log('err in registering user from google auth', err);
-                        return res.status(500).send({
-                            msg: 'Internal error / Bad payload'
-                        })
-                    } else {
-                        // user registered, sign jwt and login user
-                        const token = jwt.sign({
-                            id: id,
-                            email: email
-                        }, process.env.jwtSecret, {
-                            expiresIn: 604800
-                        });
-    
-                        // handle tokens in frontend redirect to short-url
-                        res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
-                    }
-                });
-            }
+    try {
+        const { data } = await axios({
+            url: 'https://graph.facebook.com/v4.0/oauth/access_token',
+            method: 'get',
+            params: {
+                client_id: process.env.facebookAppId,
+                client_secret: process.env.facebookAppSecret,
+                redirect_uri: 'http://localhost:3333/auth/facebook',
+                code
+            },
         });
-        client.release();
+
+        getData(data.access_token);
+
+        async function getData(access_token) {
+            const { data } = await axios({
+                url: 'https://graph.facebook.com/me',
+                method: 'get',
+                params: {
+                  fields: ['id', 'email', 'first_name', 'last_name'].join(','),
+                  access_token: access_token
+                },
+              });
+
+              if (data.email && data.first_name) {
+                socialLogin(data.email, data.first_name + ' ' + data.last_name, 'facebook', res);
+              } else {
+                console.log('Error in facebook auth, email missing');
+                res.send('Error in facebook auth, email missing');
+              }
+        }
+    } catch(err) {
+        console.log(err, 'errrr');
+        res.send('Error in facebook auth');
     }
 });
 
