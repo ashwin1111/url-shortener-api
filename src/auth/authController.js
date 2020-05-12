@@ -40,7 +40,7 @@ async function socialLogin(email, name, source, res) {
                 });
 
                 // handle tokens in frontend redirect to short-url
-                res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+                res.redirect('https://app.urlll.xyz/redirect/' + source + '-auth/' + token);
             } else {
                 return res.status(404).send({
                     msg: 'Account not verified'
@@ -64,7 +64,7 @@ async function socialLogin(email, name, source, res) {
                     });
 
                     // handle tokens in frontend redirect to short-url
-                    res.redirect('https://app.urlll.xyz/redirect/google-auth/' + token);
+                    res.redirect('https://app.urlll.xyz/redirect/' + source + '-auth/' + token);
                 }
             });
         }
