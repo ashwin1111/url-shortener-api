@@ -112,7 +112,7 @@ router.get('/facebook', async (req, res) => {
             params: {
                 client_id: process.env.facebookAppId,
                 client_secret: process.env.facebookAppSecret,
-                redirect_uri: 'http://localhost:3333/auth/facebook',
+                redirect_uri: 'https://urlll.xyz/auth/facebook',
                 code
             },
         });
