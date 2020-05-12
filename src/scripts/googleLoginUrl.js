@@ -1,8 +1,8 @@
 const queryString = require('query-string');
 
 const stringifiedParams = queryString.stringify({
-  client_id: process.env.googleClientId,
-  redirect_uri: 'https://app.urlll.xyz/auth/google',
+  client_id: '1058325697473-trm8ojpitnaomh3ina07voqe17kvjcq7.apps.googleusercontent.com',
+  redirect_uri: 'https://urlll.xyz/auth/google',
   scope: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
