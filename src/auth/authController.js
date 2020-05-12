@@ -53,7 +53,7 @@ router.get('/google', (req, res) => {
             res.send('Error in google auth');
         }
     }).catch(err => {
-        console.log('Error in google auth', err);
+        console.log('Error in google auth', err.data);
         res.send('Error in google auth');
     });
 
