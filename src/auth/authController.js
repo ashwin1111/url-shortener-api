@@ -83,12 +83,12 @@ router.get('/google', (req, res) => {
         grant_type: 'authorization_code',
         code
     };
-    axios.post('https://oauth2.googleapis.com/token', data).then(async (res) => {
+    axios.post('https://oauth2.googleapis.com/token', data).then(async (result) => {
         const { data } = await axios({
             url: 'https://www.googleapis.com/oauth2/v2/userinfo',
             method: 'get',
             headers: {
-                Authorization: `Bearer ${res.data.access_token}`,
+                Authorization: `Bearer ${result.data.access_token}`,
             }
         });
 
