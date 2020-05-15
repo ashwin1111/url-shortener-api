@@ -115,8 +115,8 @@ router.get('/list/:collectionName', async (req, result) => {
 router.get('/my_collections/all', jwtToken, async (req, result) => {
     client = await pool().connect();
 
-    await client.query(`select collection_name,collection_title,collection_description,collection_created_at from extended_collections 
-    where collection_owner_email= $1 group by collection_name,collection_title,collection_description,collection_created_at order by
+    await client.query(`select collection_name,collection_title,collection_description,collection_created_at, collection_clicks from extended_collections 
+    where collection_owner_email= $1 group by collection_name,collection_title,collection_description,collection_created_at, collection_clicks order by
     collection_created_at desc`, 
     [req.token.email], async function (err, res) {
         if (err) {
