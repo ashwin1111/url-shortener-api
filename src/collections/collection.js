@@ -83,21 +83,33 @@ router.get('/list/:collectionName', async (req, result) => {
 
     await client.query(`select * from extended_collections where collection_name = $1`, [req.params.collectionName], async function (err, res) {
         if (err) {
+            client.release();
             console.log('err in retreaving collections', err);
             return result.status(500).send('err in retreaving collections');
         } else {
             if (res.rowCount < 1) {
+                client.release();
                 return result.status(200).send({
                     collections: "No links found in the given collection name"
                 })
             }
 
+            incrementClicks(req.params.collectionName);
             return result.status(200).send({
                 collections: res.rows
             });
         }
     })
-    client.release();
+
+    async function incrementClicks(collectionName) {
+        await client.query(`update collections set clicks = clicks + 1 where name = $1`,
+            [collectionName], async function (err, res) {
+                if (err) {
+                    console.log('err in incrementing clicks', err);
+                }
+            });
+        client.release();
+    };
 })
 
 router.get('/my_collections/all', jwtToken, async (req, result) => {
