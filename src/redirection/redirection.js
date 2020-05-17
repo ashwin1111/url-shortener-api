@@ -14,8 +14,7 @@ const redisClient = require('../db/redis');
 let wakeUpCounter = 0;
 
 router.get('/', (req, res) => {
-    res.send('He.lloo..');
-    // res.redirect('https://app.urlll.xyz');
+    res.redirect('https://app.urlll.xyz');
 });
 
 router.get('/wakeup', (req, res) => {
