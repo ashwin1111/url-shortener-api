@@ -11,7 +11,7 @@ async function websiteHealthChecker() {
         console.log(res.data.data.meta_data[0]);
         if (res.data.data.meta_data[0] === 'We at polydimensional believe that to truly understand technology you need to build it while you learn') {
             // website seems to be good
-            axios.get('https://polydimensional-notifications.herokuapp.com/alert?msg=Website Health is good'); 
+            // axios.get('https://polydimensional-notifications.herokuapp.com/alert?msg=Website Health is good'); 
         } else {
             axios.get('https://polydimensional-notifications.herokuapp.com/alert?msg=Something seems to be fucked up, website is down'); 
         }
