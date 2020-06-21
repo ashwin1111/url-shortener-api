@@ -6,6 +6,11 @@ cron.schedule('*/20 * * * *', async () => {
     websiteHealthChecker();
 });
 
+cron.schedule('30 12 * * *', async () => {
+    // runs every day at 6 pm IST
+    axios.get('https://polydimensional-notifications.herokuapp.com/remainder');
+});
+
 async function websiteHealthChecker() {
     axios.get('https://webpage-details.herokuapp.com/get_page_details?web_address=http://polydimensional.in').then(async (res) => {
         console.log(res.data.data.meta_data[0]);
