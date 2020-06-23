@@ -2,7 +2,7 @@ module.exports = {
   apps : [{
     name: 'url-shortener-api',
     script: 'server.js',
-    instances: "max",
+    instances: "1",
     watch: '.'
   }],
 
