@@ -19,10 +19,9 @@ router.post('/', async (req, result) => {
         });
     }
  
-    var shortId = 'urlll.xyz/' + req.body.customShortUrl;
     const client = await pool().connect()
     await client.query(`select * from url where short_url=$1`,
-        [shortId], async function (err, res) {
+        [req.body.customShortUrl], async function (err, res) {
             if (err) {
                 console.log('err in retreaving short url', err);
                 return result.status(500).send({
