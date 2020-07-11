@@ -5,8 +5,6 @@ require('./jobs/checkExpiredUrl');
 
 require('./jobs/scrapData');
 
-require('./jobs/polydimensional');
-
 const cors = require('cors');
 app.use(cors());
 
