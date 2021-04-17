@@ -2,7 +2,7 @@ const queryString = require('query-string');
 
 const params = queryString.stringify({
     client_id: '0329fbed363d9dee78cd',
-    redirect_uri: 'https://urlll.xyz/auth/github',
+    redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/github',
     scope: ['read:user', 'user:email'].join(' '), // space seperated string
     allow_signup: true,
   });

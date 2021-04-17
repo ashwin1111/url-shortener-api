@@ -32,7 +32,7 @@ router.post('/random', validateUrl, async (req, result) => {
                 });
             } else {
                 var data = {
-                    short_url: 'urlll.xyz/' + shortUrl,
+                    short_url: 'url-shortener--api.herokuapp.com/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };
@@ -64,7 +64,7 @@ router.post('/custom', validateUrl, async function (req, result) {
                 });
             } else {
                 var data = {
-                    short_url: 'urlll.xyz/' + shortUrl,
+                    short_url: 'url-shortener--api.herokuapp.com/' + shortUrl,
                     big_url: bigUrl,
                     expiry: expiryTime
                 };

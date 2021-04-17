@@ -2,7 +2,7 @@ const queryString = require('query-string');
 
 const stringifiedParams = queryString.stringify({
   client_id: '',
-  redirect_uri: 'https://urlll.xyz/auth/google',
+  redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/google',
   scope: [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',

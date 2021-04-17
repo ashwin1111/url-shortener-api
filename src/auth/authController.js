@@ -42,7 +42,7 @@ async function socialLogin(email, name, source, res) {
                 });
 
                 // handle tokens in frontend redirect to short-url
-                res.redirect('https://app.urlll.xyz/redirect/' + source + '-auth/' + token);
+                res.redirect('https://urlll-shortener.web.app/redirect/' + source + '-auth/' + token);
             } else {
                 return res.status(404).send({
                     msg: 'Account not verified'
@@ -66,7 +66,7 @@ async function socialLogin(email, name, source, res) {
                     });
 
                     // handle tokens in frontend redirect to short-url
-                    res.redirect('https://app.urlll.xyz/redirect/' + source + '-auth/' + token);
+                    res.redirect('https://urlll-shortener.web.app/redirect/' + source + '-auth/' + token);
                 }
             });
         }
@@ -79,7 +79,7 @@ router.get('/google', (req, res) => {
     const data = {
         client_id: process.env.googleClientId,
         client_secret: process.env.googleClientSecret,
-        redirect_uri: 'https://urlll.xyz/auth/google',
+        redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/google',
         grant_type: 'authorization_code',
         code
     };
@@ -114,7 +114,7 @@ router.get('/facebook', async (req, res) => {
             params: {
                 client_id: process.env.facebookAppId,
                 client_secret: process.env.facebookAppSecret,
-                redirect_uri: 'https://urlll.xyz/auth/facebook',
+                redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/facebook',
                 code
             },
         });
@@ -155,7 +155,7 @@ router.get('/github', (req, res) => {
           params: {
             client_id: process.env.githubAppId,
             client_secret: process.env.githubAppSecret,
-            redirect_uri: 'https://urlll.xyz/auth/github',
+            redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/github',
             code,
           },
         });
@@ -291,7 +291,7 @@ router.get('/verify', async function (req, res, next) {
         await client.query('SELECT id FROM url_shortner_users WHERE id=$1', [id], async function (err, result) {
             if (result.rows[0] && id === result.rows[0].id) {
                 await client.query('update url_shortner_users set verified = true where id=$1', [id], async function (err, result) {
-                    res.redirect('https://app.urlll.xyz/redirect/verified');
+                    res.redirect('https://urlll-shortener.web.app/redirect/verified');
                 })
             } else {
                 return res.status(404).send(
@@ -380,7 +380,7 @@ router.get('/forgot_password/redirect', async function (req, res) {
                 expiresIn: 300
             });
             if (process.env.PORT) {
-                return res.redirect("https://app.urlll.xyz" + "/reset-password?token=" + token);
+                return res.redirect("https://urlll-shortener.web.app" + "/reset-password?token=" + token);
             } else {
                 return res.redirect("http://localhost:4200" + "/reset-password?token=" + token);
             }

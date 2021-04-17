@@ -2,7 +2,7 @@ const queryString = require('query-string');
 
 const stringifiedParams = queryString.stringify({
     client_id: '',
-    redirect_uri: 'https://urlll.xyz/auth/facebook',
+    redirect_uri: 'https://url-shortener--api.herokuapp.com/auth/facebook',
     scope: ['email'].join(','), // comma seperated string
     response_type: 'code',
     auth_type: 'rerequest',
