@@ -8,7 +8,6 @@ Feel free to check the [Live Application](https://urlll-shortener.web.app) and [
 ### Stack
 <li>NodeJS - API
 <li>Heroku Postgres - Primary Database
-<li>Redis - Caching
 <li>Angular 9 - Webapp
 <li>Angular 9 - Extension
 <li>Firebase - Webapp Deployment
@@ -33,8 +32,6 @@ Feel free to check the [Live Application](https://urlll-shortener.web.app) and [
 <li>Job to run every 12h to delete url's with expired time
 
 <li>Job to run every h to scrap website titles and description
-
-<li>Implemented caching using redis
 
 <li>Check whether the requested short url is available
 
